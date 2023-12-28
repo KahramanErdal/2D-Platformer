@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerDeath : MonoBehaviour
 {
-    public Transform respawnPoint; // Yeniden doðma noktasý
+    public Transform respawnPoint;
 
     void Update()
     {
@@ -18,11 +18,7 @@ public class PlayerDeath : MonoBehaviour
     {
         // Ölümde kullanýcýyý yeniden doðma noktasýna taþý
         transform.position = respawnPoint.position;
-
-        // Ýsterseniz baþka ölüm animasyonlarý, ses efektleri veya oyun durumunu sýfýrlama iþlemleri ekleyebilirsiniz.
     }
-
-    // Karakterin baþka bir nesne ile temas etmesi durumunu kontrol etmek için OnCollisionEnter2D kullanýlabilir
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("DeathZone"))
