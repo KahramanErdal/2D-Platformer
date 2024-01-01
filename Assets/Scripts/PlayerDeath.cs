@@ -6,8 +6,7 @@ public class PlayerDeath : MonoBehaviour
     public Transform respawnPoint;
 
     void Update()
-    {
-        // Karakter yüksekliði belirli bir deðerin altýna düþtüðünde ölümü tetikle
+    {     
         if (transform.position.y < -10f)
         {
             Die();
@@ -15,8 +14,7 @@ public class PlayerDeath : MonoBehaviour
     }
 
     void Die()
-    {
-        // Ölümde kullanýcýyý yeniden doðma noktasýna taþý
+    {      
         transform.position = respawnPoint.position;
     }
     void OnCollisionEnter2D(Collision2D collision)
