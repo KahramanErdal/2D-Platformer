@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public GameObject mainMenu;
-    public GameObject inmainMenu;
     public GameObject settingsMenu;
     public GameObject pauseMenu;
-    private bool _isPlay;
     public void PlayGame()
     {
         SceneManager.LoadSceneAsync("Level1");
@@ -17,6 +16,25 @@ public class MainMenu : MonoBehaviour
     {
         Application.Quit();
     }
+    public void SettingsMenu()
+    {
+        settingsMenu.SetActive(true);
+        mainMenu.SetActive(false);        
+    }
+    public void BackSettingsButton()
+    {
+        settingsMenu.SetActive(false);
+        mainMenu.SetActive(true);
+    }
+    public AudioMixer audioMixer;
 
-    
+    public void SetVolume(float volume)
+    {
+        audioMixer.SetFloat("volume", volume);
+    }
+
+    public void SetFullscreen(bool isFullscreen)
+    {
+        Screen.fullScreen = isFullscreen;
+    }
 }
