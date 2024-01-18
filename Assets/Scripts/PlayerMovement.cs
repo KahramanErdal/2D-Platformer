@@ -45,18 +45,29 @@ public class PlayerMovement : MonoBehaviour
             moveVelocity = speed;
         }
 
+        GetComponent<Rigidbody2D>().rotation = 0f; // Set rotation to zero in the Z-axis
         GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, GetComponent<Rigidbody2D>().velocity.y);
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
         Debug.Log("OnCollisionEnter2D");
-        isGrounded = true;
+
+        // Check if the collision is with a ground object
+        if (col.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
     }
 
     void OnCollisionExit2D(Collision2D col)
     {
         Debug.Log("OnCollisionExit2D");
-        isGrounded = false;
+
+        // Check if the collision is with a ground object
+        if (col.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
 }
