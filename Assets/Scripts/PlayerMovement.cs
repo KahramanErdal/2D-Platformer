@@ -1,73 +1,137 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
-    // Movement
-    public float speed;
-    public float jump;
-    private float moveVelocity;
     public Rigidbody2D rb;
-    private bool isGrounded;
-    private bool canDoubleJump;
+    public float moveSpeed = 5f;
+    bool isFacingRight = true;
 
+    float horizontalMovement;
+
+    [Header("Jumping")]
+    public float jumpPower = 10f;
+    public int maxJumps = 2;
+    int jumpsRemaining;
+
+    [Header("GroundCheck")]
+    public Transform groundCheckPos;
+    public Vector2 groundCheckSize = new Vector2(0.5f, 0.05f);
+    public LayerMask groundLayer;
+    bool isGrounded;
+
+    [Header("WallCheck")]
+    public Transform wallCheckPos;
+    public Vector2 wallCheckSize = new Vector2(0.5f, 0.05f);
+    public LayerMask wallLayer;
+
+    [Header("Gravity")]
+    public float baseGravity = 2f;
+    public float maxFallSpeed = 18f;
+    public float fallSpeedMultiplier = 2f;
+
+    [Header("WallSlide")]
+    public float wallSlideSpeed = 2;
+    bool isWallSliding;
     void Update()
     {
-        // Grounded?
-        if (isGrounded)
+        rb.velocity = new Vector2(horizontalMovement * moveSpeed, rb.velocity.y);
+        GroundCheck();
+        ProcessGravity();
+        Flip();
+        ProcessWallSlide();
+    }
+    public void Gravity()
+    {
+        if(rb.velocity.y < 0) 
         {
-            canDoubleJump = true;
+            rb.gravityScale = baseGravity * fallSpeedMultiplier; //fall speed increase
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
         }
-
-        // Jumping
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.W))
+        else
         {
-            if (isGrounded || canDoubleJump)
-            {
-                GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, jump);
-
-                // If the double jump is used, set canDoubleJump to false
-                if (!isGrounded)
+            rb.gravityScale = baseGravity;
+        }
+    }
+    public void Move(InputAction.CallbackContext context)
+    {
+        horizontalMovement = context.ReadValue<Vector2>().x;
+    }
+    public void Jump(InputAction.CallbackContext context)
+    {
+        if (jumpsRemaining > 0)
+        {         
+                if (context.performed)
                 {
-                    canDoubleJump = false;
+                    rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+                    jumpsRemaining--;
                 }
+                else if (context.canceled && rb.velocity.y >0)
+                {
+                    rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+                    jumpsRemaining--;
             }
         }
-
-        moveVelocity = 0;
-
-        // Left Right Movement
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-        {
-            moveVelocity = -speed;
-        }
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
-        {
-            moveVelocity = speed;
-        }
-
-        GetComponent<Rigidbody2D>().rotation = 0f; // Set rotation to zero in the Z-axis
-        GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, GetComponent<Rigidbody2D>().velocity.y);
     }
-
-    void OnCollisionEnter2D(Collision2D col)
+    private void GroundCheck()
     {
-        Debug.Log("OnCollisionEnter2D");
-
-        // Check if the collision is with a ground object
-        if (col.gameObject.CompareTag("Ground"))
+        if (Physics2D.OverlapBox(groundCheckPos.position, groundCheckSize, 0, groundLayer))
         {
+            jumpsRemaining = maxJumps;
             isGrounded = true;
         }
-    }
-
-    void OnCollisionExit2D(Collision2D col)
-    {
-        Debug.Log("OnCollisionExit2D");
-
-        // Check if the collision is with a ground object
-        if (col.gameObject.CompareTag("Ground"))
+        else 
         {
             isGrounded = false;
+        }
+    }
+
+    private void ProcessGravity()
+    {
+        if (rb.velocity.y < 0){
+            rb.gravityScale = baseGravity * fallSpeedMultiplier;// faster fall
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxFallSpeed));
+        }
+        else
+        {
+            rb.gravityScale = baseGravity;
+        }
+    }
+
+    private bool WallCheck()
+    {
+        return Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0, wallLayer);
+    }
+    private void ProcessWallSlide()
+    {
+        if (!isGrounded && WallCheck() & horizontalMovement != 0) 
+        {
+            isWallSliding = true;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -wallSlideSpeed));
+        }
+        else
+        {
+            isWallSliding = false;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireCube(groundCheckPos.position, groundCheckSize);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(wallCheckPos.position, wallCheckSize);
+    }
+
+    public void Flip()
+    {
+        if(isFacingRight && horizontalMovement < 0 || !isFacingRight && horizontalMovement > 0)
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 ls = transform.localScale;
+            ls.x *= -1f;
+            transform.localScale = ls;
         }
     }
 }
