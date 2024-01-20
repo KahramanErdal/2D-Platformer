@@ -7,6 +7,9 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public float moveSpeed = 5f;
     bool isFacingRight = true;
+    public ParticleSystem dirtFX;
+
+    public Animator animator;
 
     float horizontalMovement;
 
@@ -34,13 +37,31 @@ public class PlayerMovement : MonoBehaviour
     [Header("WallSlide")]
     public float wallSlideSpeed = 2;
     bool isWallSliding;
+
+    //WallJump
+    bool isWallJumping;
+    float wallJumpDirection;
+    float wallJumpTime = 0.5f;
+    float wallJumpTimer;
+    public Vector2 wallJumpPower = new Vector2(5f, 10f);
     void Update()
     {
-        rb.velocity = new Vector2(horizontalMovement * moveSpeed, rb.velocity.y);
         GroundCheck();
         ProcessGravity();
-        Flip();
         ProcessWallSlide();
+        ProcessWallJump();
+
+        if(!isWallJumping)
+        {
+            rb.velocity = new Vector2(horizontalMovement * moveSpeed, rb.velocity.y);
+            Flip();
+
+        }
+
+        animator.SetFloat("yVelocity", rb.velocity.y);
+        animator.SetFloat("magnitude", rb.velocity.magnitude);
+        animator.SetBool("isWallSliding", isWallSliding);
+
     }
     public void Gravity()
     {
@@ -66,12 +87,35 @@ public class PlayerMovement : MonoBehaviour
                 {
                     rb.velocity = new Vector2(rb.velocity.x, jumpPower);
                     jumpsRemaining--;
-                }
+                    animator.SetTrigger("Jump");
+                    dirtFX.Play();
+            }
                 else if (context.canceled && rb.velocity.y >0)
                 {
                     rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
                     jumpsRemaining--;
+                    animator.SetTrigger("Jump");
             }
+        }
+        //WallJump
+        if (context.performed && wallJumpTimer > 0f)
+        {
+            isWallJumping = true;
+            rb.velocity = new Vector2(wallJumpDirection * wallJumpPower.x, wallJumpPower.y);
+            wallJumpTimer = 0;
+            animator.SetTrigger("Jump");
+            dirtFX.Play();
+
+            //ForceFlip
+            if (transform.localScale.x != wallJumpDirection)
+            {
+                isFacingRight = !isFacingRight;
+                Vector3 ls = transform.localScale;
+                ls.x *= -1f;
+                transform.localScale = ls;
+            }
+
+            Invoke(nameof(CancelWallJump), wallJumpTime + 0.1f);
         }
     }
     private void GroundCheck()
@@ -99,6 +143,25 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void ProcessWallJump()
+    {
+        if (isWallSliding)
+        {
+            isWallJumping = false;
+            wallJumpDirection = -transform.localScale.x;
+            wallJumpTimer = wallJumpTime;
+
+            CancelInvoke(nameof(CancelWallJump));
+        }
+        else if(wallJumpTimer > 0f)
+        {
+            wallJumpTimer -= Time.deltaTime;
+        }
+    }
+    private void CancelWallJump()
+    {
+        isWallJumping = false;
+    }
     private bool WallCheck()
     {
         return Physics2D.OverlapBox(wallCheckPos.position, wallCheckSize, 0, wallLayer);
@@ -132,6 +195,11 @@ public class PlayerMovement : MonoBehaviour
             Vector3 ls = transform.localScale;
             ls.x *= -1f;
             transform.localScale = ls;
+
+            if(rb.velocity.y == 0)
+            {
+                dirtFX.Play();
+            }
         }
     }
 }
