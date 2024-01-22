@@ -31,29 +31,38 @@ public class Enemy : MonoBehaviour
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 1f, groundLayer);
 
-        float direction = Mathf.Sign(player.position.x - transform.position.x);
-        bool isPlayerAbove = Physics2D.Raycast(transform.position, Vector2.up, 5f, 1 << player.gameObject.layer);
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        if (isGrounded)
+        // Set a threshold distance to start chasing the player
+        float chaseThreshold = 10f;
+
+        if (distanceToPlayer <= chaseThreshold)
         {
-            rb.velocity = new Vector2(direction * chaseSpeed, rb.velocity.y);
+            float direction = Mathf.Sign(player.position.x - transform.position.x);
+            bool isPlayerAbove = Physics2D.Raycast(transform.position, Vector2.up, 5f, 1 << player.gameObject.layer);
 
-            RaycastHit2D groundInFront = Physics2D.Raycast(transform.position, new Vector2(direction, 0), 2f, groundLayer);
-
-            RaycastHit2D gapAhead = Physics2D.Raycast(transform.position + new Vector3(direction, 0, 0), Vector2.down, 2f, groundLayer);
-
-            RaycastHit2D platformAbove = Physics2D.Raycast(transform.position, Vector2.up, 3f, groundLayer);
-
-            if (!groundInFront.collider && !gapAhead.collider)
+            if (isGrounded)
             {
-                shouldJump = true;
-            }
-            else if (isPlayerAbove && platformAbove.collider)
-            {
-                shouldJump = true;
+                rb.velocity = new Vector2(direction * chaseSpeed, rb.velocity.y);
+
+                RaycastHit2D groundInFront = Physics2D.Raycast(transform.position, new Vector2(direction, 0), 2f, groundLayer);
+
+                RaycastHit2D gapAhead = Physics2D.Raycast(transform.position + new Vector3(direction, 0, 0), Vector2.down, 2f, groundLayer);
+
+                RaycastHit2D platformAbove = Physics2D.Raycast(transform.position, Vector2.up, 3f, groundLayer);
+
+                if (!groundInFront.collider && !gapAhead.collider)
+                {
+                    shouldJump = true;
+                }
+                else if (isPlayerAbove && platformAbove.collider)
+                {
+                    shouldJump = true;
+                }
             }
         }
     }
+
 
     void FixedUpdate()
     {
@@ -80,7 +89,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator FlashWhite()
     {
-        spriteRenderer.color = Color.white;
+        spriteRenderer.color = Color.red;
         yield return new WaitForSeconds(0.2f);
         spriteRenderer.color = ogColor;
     }

@@ -8,12 +8,13 @@ public class Fireball : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Enemy enemy = collision.GetComponent<Enemy>();
-        if (enemy)
+       
+        if (collision.CompareTag("Enemy"))
         {
+            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
             enemy.TakeDamage(fireBallDamage);
-
             Destroy(gameObject);
         }
     }
+    
 }

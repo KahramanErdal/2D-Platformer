@@ -28,6 +28,11 @@ public class PlayerHealth : MonoBehaviour
         {
             TakeDamage(enemy.damage);
         }
+        Trap trap = collision.GetComponent<Trap>();
+        if (trap && trap.damage >0)
+        {
+            TakeDamage(trap.damage);
+        }
     }
 
     private void TakeDamage(int damage)
