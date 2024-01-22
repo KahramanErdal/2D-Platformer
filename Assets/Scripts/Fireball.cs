@@ -12,6 +12,7 @@ public class Fireball : MonoBehaviour
         if (enemy)
         {
             enemy.TakeDamage(fireBallDamage);
+
             Destroy(gameObject);
         }
     }
