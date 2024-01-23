@@ -15,6 +15,7 @@ public class PlayerAttack : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && Time.time > nextFireTime)
         {
             Shoot();
+            anim.SetTrigger("attack");
         }
     }
 
@@ -36,17 +37,15 @@ public class PlayerAttack : MonoBehaviour
         SpriteRenderer fireballSpriteRenderer = fireball.GetComponent<SpriteRenderer>();
         if (shootDirection.x < 0)
         {
-            fireballSpriteRenderer.flipX = true;
+            fireballSpriteRenderer.flipY = true;
         }
         else
         {
-            fireballSpriteRenderer.flipX = false;
+            fireballSpriteRenderer.flipY = false;
         }
 
         // Move the fireball forward in the direction of the mouse
         fireball.GetComponent<Rigidbody2D>().velocity = new Vector2(shootDirection.x, shootDirection.y) * fireSpeed;
-
-        anim.SetTrigger("attack");
 
         Destroy(fireball, 2f);
         // Set the next fire time based on cooldown

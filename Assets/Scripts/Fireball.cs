@@ -11,9 +11,14 @@ public class Fireball : MonoBehaviour
        
         if (collision.CompareTag("Enemy"))
         {
-            Enemy enemy = collision.gameObject.GetComponent<Enemy>();
-            RangedEnemy rangedenemy = collision.gameObject.GetComponent<RangedEnemy>();  
+            Enemy enemy = collision.gameObject.GetComponent<Enemy>();     
             enemy.TakeDamage(fireBallDamage);
+            Destroy(gameObject);
+        }
+        if (collision.CompareTag("RangeEnemy"))
+        {
+            RangedEnemy rangedenemy = collision.gameObject.GetComponent<RangedEnemy>();
+            rangedenemy.TakeRangeDamage(fireBallDamage);
             Destroy(gameObject);
         }
     }

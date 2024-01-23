@@ -21,7 +21,7 @@ public class RangedEnemy : MonoBehaviour
         ogColor = spriteRenderer.color;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeRangeDamage(int damage)
     {
         currentHealth -= damage;
         StartCoroutine(FlashWhite());
