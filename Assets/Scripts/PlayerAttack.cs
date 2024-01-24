@@ -8,14 +8,12 @@ public class PlayerAttack : MonoBehaviour
     public float fireSpeed = 50f;
     public float cooldownTime = 1.5f; 
     private float nextFireTime; 
-    private Animator anim;
     // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && Time.time > nextFireTime)
         {
-            Shoot();
-            anim.SetTrigger("attack");
+            Shoot();           
         }
     }
 
@@ -47,7 +45,7 @@ public class PlayerAttack : MonoBehaviour
         // Move the fireball forward in the direction of the mouse
         fireball.GetComponent<Rigidbody2D>().velocity = new Vector2(shootDirection.x, shootDirection.y) * fireSpeed;
 
-        Destroy(fireball, 2f);
+        Destroy(fireball, 0.6f);
         // Set the next fire time based on cooldown
         nextFireTime = Time.time + cooldownTime;
     }

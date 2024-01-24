@@ -9,6 +9,7 @@ TagManager:
   - boncuk
   - RangeEnemy
   - door
+  - Deathzone
   layers:
   - Default
   - TransparentFX
