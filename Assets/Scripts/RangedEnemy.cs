@@ -11,6 +11,7 @@ public class RangedEnemy : MonoBehaviour
     private Color ogColor;
     public int damage = 1;
 
+    [SerializeField] private AudioSource enemydamageEffect;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,7 @@ public class RangedEnemy : MonoBehaviour
 
     public void TakeRangeDamage(int damage)
     {
+        enemydamageEffect.Play();
         currentHealth -= damage;
         StartCoroutine(FlashWhite());
         if (currentHealth <= 0)

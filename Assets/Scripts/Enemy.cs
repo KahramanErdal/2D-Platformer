@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour
 
     public int damage = 1;
 
+    [SerializeField] private AudioSource enemydamageEffect;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -79,6 +80,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        enemydamageEffect.Play();
         currentHealth -= damage;
         StartCoroutine(FlashWhite());
         if (currentHealth <= 0)

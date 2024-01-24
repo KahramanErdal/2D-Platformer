@@ -7,13 +7,15 @@ public class PlayerAttack : MonoBehaviour
     public GameObject fireBallPrefab;
     public float fireSpeed = 50f;
     public float cooldownTime = 1.5f; 
-    private float nextFireTime; 
+    private float nextFireTime;
     // Update is called once per frame
+    [SerializeField] private AudioSource fireBallEffect;
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && Time.time > nextFireTime)
         {
-            Shoot();           
+            Shoot();  
+            fireBallEffect.Play();
         }
     }
 

@@ -13,6 +13,7 @@ public class PlayerHealth : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
+    [SerializeField] private AudioSource hurtEffect;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +42,7 @@ public class PlayerHealth : MonoBehaviour
         healthUI.UpdateHearts(currentHealth);
 
         StartCoroutine(FlashRed());
+        hurtEffect.Play();
 
         if (currentHealth <= 0)
         {
