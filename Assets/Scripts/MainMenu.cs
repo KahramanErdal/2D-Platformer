@@ -8,9 +8,11 @@ public class MainMenu : MonoBehaviour
     public GameObject mainMenu;
     public GameObject settingsMenu;
     public GameObject pauseMenu;
+    public GameObject levelSelect;
     public void PlayGame()
     {
-        SceneManager.LoadSceneAsync("Level1");
+        levelSelect.SetActive(true);
+        mainMenu.SetActive(false);
     }
     public void QuitGame()
     {
@@ -26,15 +28,16 @@ public class MainMenu : MonoBehaviour
         settingsMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
-    public AudioMixer audioMixer;
-
-    public void SetVolume(float volume)
-    {
-        audioMixer.SetFloat("volume", volume);
-    }
-
     public void SetFullscreen(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
+    }
+    public void LevelOneButton()
+    {
+        SceneManager.LoadSceneAsync("Level1");
+    }
+    public void LevelTwoButton()
+    {
+        SceneManager.LoadSceneAsync("Level2");
     }
 }
