@@ -9,7 +9,7 @@ public class NextLevelPoint : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            SceneManager.LoadSceneAsync("Level2");
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 }

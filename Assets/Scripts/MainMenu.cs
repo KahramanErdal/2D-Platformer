@@ -35,9 +35,11 @@ public class MainMenu : MonoBehaviour
     public void LevelOneButton()
     {
         SceneManager.LoadSceneAsync("Level1");
+        Time.timeScale = 1f;
     }
     public void LevelTwoButton()
     {
         SceneManager.LoadSceneAsync("Level2");
+        Time.timeScale = 1f;
     }
 }
