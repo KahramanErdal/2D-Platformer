@@ -9,7 +9,7 @@ public class PlayerHealth : MonoBehaviour
 
     public HealthUI healthUI;
 
-    public Transform respawnPoint; // Set this in the inspector to the desired respawn point
+    public Transform respawnPoint; 
 
     private SpriteRenderer spriteRenderer;
 
@@ -52,17 +52,13 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        // Perform any death-related logic (e.g., play death animation, show game over screen)
-
-        // Respawn after a delay
-        StartCoroutine(RespawnAfterDelay(2.0f)); // Adjust the delay as needed
+        StartCoroutine(RespawnAfterDelay(2.0f)); 
     }
 
     private IEnumerator RespawnAfterDelay(float delay)
     {
         yield return new WaitForSeconds(0f);
 
-        // Respawn at the checkpoint or respawn point
         Respawn();
     }
 
@@ -72,10 +68,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = maxHealth;
         healthUI.UpdateHearts(currentHealth);
 
-        // Move the player to the respawn point
         transform.position = respawnPoint.position;
-
-        // Additional respawn logic can be added here
     }
 
     private IEnumerator FlashRed()
